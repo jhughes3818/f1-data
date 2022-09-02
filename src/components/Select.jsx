@@ -3,7 +3,7 @@ import React from 'react';
 function Select(props) {
 
   function makeOption(item) {
-    return (<option>{item}</option>)
+    return (<option value="item">{item}</option>)
   }
 
   return(
