@@ -1,5 +1,4 @@
 import React from 'react';
-//import tracks from '../data/tracks'
 import Select from './Select'
 
 function SelectTrack(props) {
