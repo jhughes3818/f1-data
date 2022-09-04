@@ -48,7 +48,7 @@ function DriverStandings() {
 
   function CreateStandingsRows(position) {
     return (
-      <tr className="h-12 border-t border-gray-600 hover:bg-gray-400">
+      <tr className="tbody">
         <td className="px-2">{position.position}</td>
         <td className="pr-6 pl-2">
           {position.firstName + " " + position.lastName}
@@ -78,7 +78,7 @@ function DriverStandings() {
               {yearsSupported.reverse().map(makeOption)}
             </select>
           </form>
-          <table className="rounded-lg mx-2 text-black w-100">
+          <table className="table">
             <thead>
               <tr className="uppercase font-medium h-12">
                 <td className="px-2">Position</td>

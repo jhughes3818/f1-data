@@ -42,4 +42,12 @@ code {
   .standings-button {
     @apply block rounded-lg px-3 py-2 w-full bg-gray-800 text-white font-bold hover:bg-green-600 transition-all duration-200 ease-linear;
   }
+
+  .table {
+    @apply rounded-lg mx-2 text-black;
+  }
+
+  .tbody {
+    @apply h-12 border-t border-gray-600 hover:bg-green-300;
+  }
 }
