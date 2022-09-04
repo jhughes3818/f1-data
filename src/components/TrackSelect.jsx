@@ -1,17 +1,14 @@
-import React from 'react';
-import Select from './Select'
+import React from "react";
+import Select from "./Select";
 
 function SelectTrack(props) {
-    return (
-
-        <form>
-          <div className="mt-1">
-              <Select array={props.tracks} />
-          </div>
-        </form>
-      )
+  return (
+    <form>
+      <div className="mt-1">
+        <Select name="track" array={props.tracks} />
+      </div>
+    </form>
+  );
 }
 
-export default SelectTrack
-
-
+export default SelectTrack;
