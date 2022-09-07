@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Sidebar from "./sidebar";
 import axios from "axios";
 import yearsSupported from "../data/years";
+import YearsOptions from "./YearsOptions";
 
 function RaceResults() {
   let [trackSelected, changeState] = useState(false);
@@ -112,29 +113,17 @@ function RaceResults() {
               <label className="block font-medium text-lg">
                 Select Grand Prix
               </label>
-              <select
-                className="w-full border-gray-300 rounded-lg shadow-sm text-black"
-                name="year"
-                onChange={loadTracks}
-                value={year}
-              >
-                {yearsSupported.reverse().map(makeOption)}
-              </select>
+              <YearsOptions function={loadTracks} />
             </div>
           </form>
-          {trackSelected ? null : (
-            <button onClick={loadTracks} className="select-button">
-              Select
-            </button>
-          )}
           <form className="gap-4" onSubmit={getRaceResults}>
             {trackSelected ? (
               <select
                 className="w-full border-gray-300 rounded-lg shadow-sm text-black"
                 name="year"
                 onChange={getGPRound}
-                value={year}
               >
+                <option>Select Grand Prix</option>
                 {tracks.reverse().map(makeOptionTracks)}
               </select>
             ) : null}
@@ -148,22 +137,22 @@ function RaceResults() {
               Submit
             </button>
           ) : null}
-          <table className="table">
-            <thead>
-              <tr className="uppercase font-medium h-12">
-                <td>Position</td>
-                <td>Name</td>
-                <td>Team</td>
-                <td>Grid Position</td>
-                <td>Time</td>
-              </tr>
-            </thead>
-            {haveResults ? (
+          {haveResults ? (
+            <table className="table">
+              <thead>
+                <tr className="uppercase font-medium h-12">
+                  <td>Position</td>
+                  <td>Name</td>
+                  <td>Team</td>
+                  <td>Grid Position</td>
+                  <td>Time</td>
+                </tr>
+              </thead>
               <tbody className="whitespace-nowrap">
                 {results.map(CreateResultsRows)}
               </tbody>
-            ) : null}
-          </table>
+            </table>
+          ) : null}
         </div>
       </div>
     </div>

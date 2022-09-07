@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import SideBar from "./sidebar";
 import axios from "axios";
-import YearsSelect from "./YearsSelect";
-import yearsSupported from "../data/years";
+import YearsOptions from "./YearsOptions";
 
 function DriverStandings() {
   let [Standings, updateStandings] = useState([]);
@@ -69,14 +68,7 @@ function DriverStandings() {
 
         <div className="my-10 mx-auto border rounded-lg shadow-lg">
           <form className="px-6 gap-2 py-6" onSubmit={getLatestStandings}>
-            <select
-              className="w-full border-gray-300 rounded-lg shadow-sm text-black"
-              name="year"
-              onChange={getLatestStandings}
-              value={year}
-            >
-              {yearsSupported.reverse().map(makeOption)}
-            </select>
+            <YearsOptions function={getLatestStandings} />
           </form>
           <table className="table">
             <thead>
