@@ -17,11 +17,13 @@ const SideBar = (props) => {
       <a href="/results">
         <SideBarIcon icon={<FaStream size="28" />} text="Race Results" />
       </a>
+      <a href="season-prediction">
+        <SideBarIcon
+          icon={<BsFillLightningFill size="28" />}
+          text="Season Prediction"
+        />
+      </a>
 
-      <SideBarIcon
-        icon={<BsFillLightningFill size="28" />}
-        text="Fastest Laps"
-      />
       <SideBarIcon icon={<FaPoo size="28" />} text="More Info" />
     </div>
   );
