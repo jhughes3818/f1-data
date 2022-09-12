@@ -7,6 +7,7 @@ function SeasonPrediction() {
   let [seasonPrediction, setSeasonPrediction] = useState();
   let [hasSeasonPrediction, setHasSeasonPrediction] = useState(false);
   let [hideButton, setHideButton] = useState(false);
+  let [status, setStatus] = useState("");
 
   let seasonRaces = [];
 
@@ -30,13 +31,17 @@ function SeasonPrediction() {
         let currentDateString = `${year}-${month}-${day}`;
         let currentDate = Date.parse(currentDateString);
 
+        let comparisonDate = Date.parse("2022-04-12");
+
         races.forEach((race) => {
-          if (Date.parse(race.date) < currentDate) {
+          if (Date.parse(race.date) < comparisonDate) {
             seasonRaces.push(race.round);
+            setStatus("Added Round " + race.round);
             console.log("Added Round " + race.round);
           }
         });
       });
+    setStatus("Downloading Race Data");
     console.log("Finished Getting Races");
     console.log(seasonRaces);
     await getStandings();
@@ -64,6 +69,7 @@ function SeasonPrediction() {
       });
       seasonStandings.push(raceStandings);
       console.log("Added Standings");
+      setStatus("Adding Standings for Round " + race);
     }
   }
 
@@ -93,8 +99,6 @@ function SeasonPrediction() {
       };
       driverSeasonPoints.push(driverRaceData);
     });
-
-    console.log(driverSeasonPoints[0].points[0].slice(-5));
 
     driverSeasonPoints.forEach((driver) => {
       let recentPoints = driver.points[0].slice(-6);
@@ -149,7 +153,7 @@ function SeasonPrediction() {
       <div className="my-10 mx-auto border rounded-lg shadow-lg">
         {isLoading ? (
           <div className="content-center">
-            <h1 className="block font-medium text-lg">Loading...</h1>
+            <h1 className="block font-bold text-3xl">{status}</h1>
           </div>
         ) : (
           <div>
