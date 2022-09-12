@@ -8,9 +8,8 @@ function SeasonPrediction() {
   let [hasSeasonPrediction, setHasSeasonPrediction] = useState(false);
   let [hideButton, setHideButton] = useState(false);
   let [status, setStatus] = useState("");
-
+  
   let seasonRaces = [];
-
   let seasonStandings = [];
 
   async function getRaces() {
