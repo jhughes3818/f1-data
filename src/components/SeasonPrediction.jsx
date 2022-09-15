@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 import SideBar from "./sidebar";
+import Chart from "react-apexcharts";
+import ApexCharts from "apexcharts";
+import Table from "./Table";
 
 function SeasonPrediction() {
   let [isLoading, setLoading] = useState(false);
@@ -8,7 +11,18 @@ function SeasonPrediction() {
   let [hasSeasonPrediction, setHasSeasonPrediction] = useState(false);
   let [hideButton, setHideButton] = useState(false);
   let [status, setStatus] = useState("");
-  
+  let [finishingPredictionByRace, setFinishingPredictionByRace] = useState();
+
+  let [chartData, setChartData] = useState({
+    series: finishingPredictionByRace,
+    options: {
+      chart: {
+        height: 350,
+        type: "line",
+      },
+    },
+  });
+
   let seasonRaces = [];
   let seasonStandings = [];
 
@@ -30,7 +44,7 @@ function SeasonPrediction() {
         let currentDateString = `${year}-${month}-${day}`;
         let currentDate = Date.parse(currentDateString);
 
-        let comparisonDate = Date.parse("2022-04-12");
+        let comparisonDate = currentDate;
 
         races.forEach((race) => {
           if (Date.parse(race.date) < comparisonDate) {
@@ -131,19 +145,76 @@ function SeasonPrediction() {
     setSeasonPrediction((seasonPrediction = driverPointsSorted));
 
     console.log(seasonPrediction);
+    let driverAveragePointsByRace = [];
+
+    driverSeasonPoints.forEach((driver) => {
+      let pointsGainedArray = [];
+      let pointsAverage = [];
+      let finishingPointsPrediction = [];
+      for (let i = 1; i < driver.points[0].length; i++) {
+        let count = 0;
+        let total = 0;
+        let pointsGained = driver.points[0][i] - driver.points[0][i - 1];
+        pointsGainedArray.push(pointsGained);
+        if (i < 6) {
+          pointsGainedArray.forEach((entry) => {
+            total += entry;
+            count++;
+          });
+          pointsAverage.push(total / count);
+          let racesRemaining = 22 - i;
+          let prediction =
+            Number(driver.points[0][i]) + (total / count) * racesRemaining;
+          if (prediction > 0) {
+            finishingPointsPrediction.push(
+              Number(driver.points[0][i]) + (total / count) * racesRemaining
+            );
+          } else {
+            finishingPointsPrediction.push(Number(driver.points[0][i]));
+          }
+        } else {
+          pointsGainedArray.slice(-5).forEach((entry) => {
+            total += entry;
+            count++;
+          });
+          pointsAverage.push(total / count);
+          let racesRemaining = 22 - i;
+          let prediction =
+            Number(driver.points[0][i]) + (total / count) * racesRemaining;
+          if (prediction > 0) {
+            finishingPointsPrediction.push(
+              Number(driver.points[0][i]) + (total / count) * racesRemaining
+            );
+          } else {
+            finishingPointsPrediction.push(Number(driver.points[0][i]));
+          }
+        }
+      }
+      let newData = {
+        name: driver.name,
+        //pointsGainedAverage: pointsAverage,
+        data: finishingPointsPrediction,
+      };
+      driverAveragePointsByRace.push(newData);
+    });
+
+    console.log(driverAveragePointsByRace);
+    setFinishingPredictionByRace(driverAveragePointsByRace);
     setHasSeasonPrediction(true);
     setHideButton(true);
-  }
-
-  function CreateStandingsRows(position) {
-    return (
-      <tr className="tbody">
-        <td className="px-2">{position.name}</td>
-        <td className="pr-6 pl-2">{position.averagePointsGained}</td>
-        <td className="pr-6 pl-2">{position.currentPoints}</td>
-        <td className="px-2">{Math.round(position.finishingPoints)}</td>
-      </tr>
-    );
+    setChartData({
+      series: driverAveragePointsByRace,
+      options: {
+        chart: {
+          height: 750,
+          type: "line",
+        },
+        stroke: {
+          width: 2,
+          curve: "smooth",
+        },
+      },
+    });
   }
 
   return (
@@ -164,19 +235,14 @@ function SeasonPrediction() {
           </div>
         )}
         {hasSeasonPrediction ? (
-          <table className="table">
-            <thead>
-              <tr className="uppercase font-medium h-12">
-                <td className="px-2">Driver</td>
-                <td className="pr-6 pl-2">Average Points Gained</td>
-                <td className="px-2">Current Points</td>
-                <td className="px-2">Predicted Finishing Points</td>
-              </tr>
-            </thead>
-            <tbody className="whitespace-nowrap">
-              {seasonPrediction.map(CreateStandingsRows)}
-            </tbody>
-          </table>
+          <div>
+            <Chart
+              series={chartData.series}
+              options={chartData.options}
+              type="line"
+              width="1000"
+            />
+          </div>
         ) : null}
       </div>
     </div>
