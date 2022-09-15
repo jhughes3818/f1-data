@@ -166,11 +166,11 @@ function SeasonPrediction() {
           let prediction =
             Number(driver.points[0][i]) + (total / count) * racesRemaining;
           if (prediction > 0) {
-            finishingPointsPrediction.push(
-              Number(driver.points[0][i]) + (total / count) * racesRemaining
-            );
+            finishingPointsPrediction.push(Math.round(prediction));
           } else {
-            finishingPointsPrediction.push(Number(driver.points[0][i]));
+            finishingPointsPrediction.push(
+              Math.round(Number(driver.points[0][i]))
+            );
           }
         } else {
           pointsGainedArray.slice(-5).forEach((entry) => {
@@ -182,18 +182,42 @@ function SeasonPrediction() {
           let prediction =
             Number(driver.points[0][i]) + (total / count) * racesRemaining;
           if (prediction > 0) {
-            finishingPointsPrediction.push(
-              Number(driver.points[0][i]) + (total / count) * racesRemaining
-            );
+            finishingPointsPrediction.push(Math.floor(prediction));
           } else {
             finishingPointsPrediction.push(Number(driver.points[0][i]));
           }
         }
       }
+      let color = "";
+      if (driver.name === "Leclerc" || driver.name === "Sainz") {
+        color = "#DC0000";
+      } else if (driver.name === "Pérez" || driver.name === "Verstappen") {
+        color = "#0600EF";
+      } else if (driver.name === "Russell" || driver.name === "Hamilton") {
+        color = "#00D2BE";
+      } else if (driver.name === "Norris" || driver.name === "Ricciardo") {
+        color = "#FF8700";
+      } else if (driver.name === "Ocon" || driver.name === "Alonso") {
+        color = "#0090FF";
+      } else if (driver.name === "Bottas" || driver.name === "Zhou") {
+        color = "#900000";
+      } else if (driver.name === "Gasly" || driver.name === "Tsunoda") {
+        color = "#2B4562";
+      } else if (driver.name === "Magnussen" || driver.name === "Schumacher") {
+        color = "#FFFFFF";
+      } else if (driver.name === "Vettel" || driver.name === "Stroll") {
+        color = "#006F62";
+      } else if (driver.name === "Albon" || driver.name === "Latifi") {
+        color = "#005AFF";
+      } else {
+        color = "#999999";
+      }
+
       let newData = {
         name: driver.name,
         //pointsGainedAverage: pointsAverage,
         data: finishingPointsPrediction,
+        color: color,
       };
       driverAveragePointsByRace.push(newData);
     });
@@ -208,10 +232,20 @@ function SeasonPrediction() {
         chart: {
           height: 750,
           type: "line",
+          toolbar: {
+            show: false,
+          },
         },
         stroke: {
           width: 2,
           curve: "smooth",
+        },
+        title: {
+          text: "2022 Season Prediction",
+          style: {
+            fontSize: "50px",
+            fontFamily: "Inter",
+          },
         },
       },
     });
