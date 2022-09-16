@@ -2,74 +2,25 @@ import React, { useState } from "react";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJs } from "chart.js/auto";
 
-let raceData3 = {
-  verstappen: {
-    race: 1,
-    points: 50,
-  },
-};
+function LineChart(props) {
+  let [chartData, setChartData] = useState({});
 
-let raceData = [
-  {
-    name: "Leclerc",
-    race: 1,
-    points: 50,
-    points2: 40,
-  },
-  {
-    name: "Leclerc",
-    race: 2,
-    points: 25,
-    points2: 50,
-  },
-  {
-    name: "Leclerc",
-    race: 3,
-    points: 0,
-    points2: 25,
-  },
-  {
-    name: "Leclerc",
-    race: 4,
-    points: 15,
-    points2: 10,
-  },
-  {
-    name: "Leclerc",
-    race: 5,
-    points: 9,
-    points2: 50,
-  },
-  {
-    name: "Leclerc",
-    race: 6,
-    points: 50,
-    points2: 20,
-  },
-  {
-    name: "Leclerc",
-    race: 7,
-    points: 50,
-  },
-];
+  let data = [];
 
-function LineChart() {
-  let [chartData, setChartData] = useState({
-    labels: raceData.map((raceData) => raceData.race),
-    datasets: [
-      {
-        label: "Leclerc",
-        data: raceData.map((raceData) => raceData.points),
-        backgroundColor: ["red"],
-        borderColor: "red",
-      },
-      {
-        label: "Verstappen",
-        data: raceData.map((raceData) => raceData.points2),
-        backgroundColor: "blue",
-        borderColor: "blue",
-      },
+  props.series.forEach((driver) => {
+    let newData = {
+      label: driver.name,
+      data: driver.data,
+      borderColor: driver.color,
+    };
+    data.push(newData);
+  });
+
+  setChartData({
+    labels: [
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
     ],
+    datasets: data,
   });
 
   return (

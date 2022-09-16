@@ -4,6 +4,9 @@ import SideBar from "./sidebar";
 import Chart from "react-apexcharts";
 import ApexCharts from "apexcharts";
 import Table from "./Table";
+import LineChart from "./LineChart";
+import { Line } from "react-chartjs-2";
+import { Chart as ChartJs } from "chart.js/auto";
 
 function SeasonPrediction() {
   let [isLoading, setLoading] = useState(false);
@@ -12,13 +15,20 @@ function SeasonPrediction() {
   let [hideButton, setHideButton] = useState(false);
   let [status, setStatus] = useState("");
   let [finishingPredictionByRace, setFinishingPredictionByRace] = useState();
-
-  let [chartData, setChartData] = useState({
-    series: finishingPredictionByRace,
-    options: {
-      chart: {
-        height: 350,
-        type: "line",
+  let [chartDataChartsJS, setChartDataChartsJS] = useState();
+  let [chartOptions, setChartOptions] = useState({
+    responsive: true,
+    tension: 0.5,
+    interaction: {
+      mode: "index",
+    },
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+        text: "2022 Season Prediction",
       },
     },
   });
@@ -226,35 +236,30 @@ function SeasonPrediction() {
     setFinishingPredictionByRace(driverAveragePointsByRace);
     setHasSeasonPrediction(true);
     setHideButton(true);
-    setChartData({
-      series: driverAveragePointsByRace,
-      options: {
-        chart: {
-          height: 750,
-          type: "line",
-          toolbar: {
-            show: false,
-          },
-        },
-        stroke: {
-          width: 2,
-          curve: "smooth",
-        },
-        title: {
-          text: "2022 Season Prediction",
-          style: {
-            fontSize: "50px",
-            fontFamily: "Inter",
-          },
-        },
-      },
+
+    let data = [];
+
+    driverAveragePointsByRace.forEach((driver) => {
+      let newData = {
+        label: driver.name,
+        data: driver.data,
+        borderColor: driver.color,
+        fill: driver.color,
+        enabled: false,
+      };
+      data.push(newData);
+    });
+
+    setChartDataChartsJS({
+      labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      datasets: data,
     });
   }
 
   return (
-    <div className="flex">
+    <div className="w-full">
       <SideBar />
-      <div className="my-10 mx-auto border rounded-lg shadow-lg">
+      <div className="my-10 mx-auto border rounded-lg shadow-lg w-4/5">
         {isLoading ? (
           <div className="content-center">
             <h1 className="block font-bold text-3xl">{status}</h1>
@@ -269,13 +274,8 @@ function SeasonPrediction() {
           </div>
         )}
         {hasSeasonPrediction ? (
-          <div>
-            <Chart
-              series={chartData.series}
-              options={chartData.options}
-              type="line"
-              width="1000"
-            />
+          <div className="px-10 py-10">
+            <Line data={chartDataChartsJS} options={chartOptions} />
           </div>
         ) : null}
       </div>
