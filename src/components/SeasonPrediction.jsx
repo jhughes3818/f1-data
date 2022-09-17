@@ -1,22 +1,18 @@
 import React, { useState } from "react";
 import axios from "axios";
 import SideBar from "./sidebar";
-import Chart from "react-apexcharts";
-import ApexCharts from "apexcharts";
-import Table from "./Table";
-import LineChart from "./LineChart";
 import { Line } from "react-chartjs-2";
-import { Chart as ChartJs } from "chart.js/auto";
 
 function SeasonPrediction() {
-  let [isLoading, setLoading] = useState(false);
-  let [seasonPrediction, setSeasonPrediction] = useState();
-  let [hasSeasonPrediction, setHasSeasonPrediction] = useState(false);
-  let [hideButton, setHideButton] = useState(false);
-  let [status, setStatus] = useState("");
-  let [finishingPredictionByRace, setFinishingPredictionByRace] = useState();
-  let [chartDataChartsJS, setChartDataChartsJS] = useState();
-  let [chartOptions, setChartOptions] = useState({
+  //Declaring All States Used
+  let [isLoading, setLoading] = useState(false); //Adds loading text & prevents premature loading of charts
+  let [hasSeasonPrediction, setHasSeasonPrediction] = useState(false); //True when season prediction is reached
+  let [hideButton, setHideButton] = useState(false); //Hides start button
+  let [status, setStatus] = useState(""); //Holds current loading text
+  let [chartDataChartsJS, setChartDataChartsJS] = useState(); //Holds data for chart
+
+  let chartOptions = {
+    //Holds chart options
     responsive: true,
     tension: 0.5,
     interaction: {
@@ -25,18 +21,22 @@ function SeasonPrediction() {
     plugins: {
       legend: {
         position: "top",
+        maxHeight: 50,
       },
       title: {
         display: true,
         text: "2022 Season Prediction",
       },
     },
-  });
+  };
 
-  let seasonRaces = [];
+  //Holds the basic data for prediction analysis
+  let seasonRaces = []; //Holds list of the races in the season selected
   let seasonStandings = [];
 
+  //Primary Function Called on Button Click
   async function getRaces() {
+    //First, we get the list of races
     await axios
       .get("http://ergast.com/api/f1/current.json")
       .then((response) => {
@@ -56,6 +56,7 @@ function SeasonPrediction() {
 
         let comparisonDate = currentDate;
 
+        //Adds races up in the season to seasonRaces, if current season adds all races that have already occurred.
         races.forEach((race) => {
           if (Date.parse(race.date) < comparisonDate) {
             seasonRaces.push(race.round);
@@ -67,12 +68,17 @@ function SeasonPrediction() {
     setStatus("Downloading Race Data");
     console.log("Finished Getting Races");
     console.log(seasonRaces);
+    //Now, call function to populate the standings & points for each race.
     await getStandings();
+    //Run prediction algorithm
     await getLeader();
+    //Set loading to false, to allow the chart to be rendered
     setLoading(false);
   }
 
+  //Downloads all points data for the races retrieved.
   async function getStandings() {
+    //First, loop through the races
     for (const race of seasonRaces) {
       let raceStandings = [];
       let url =
@@ -80,6 +86,7 @@ function SeasonPrediction() {
       await axios.get(url).then((response) => {
         let standings =
           response.data.MRData.StandingsTable.StandingsLists[0].DriverStandings;
+        //Loop though each driver retrieved and add relevant data to the raceStandings array
         standings.forEach((driver) => {
           let newData = {
             position: driver.position,
@@ -90,21 +97,27 @@ function SeasonPrediction() {
           raceStandings.push(newData);
         });
       });
+      //Push all standings data to seasonStandings array
+      //The results is an array with an each entry including being an array of objects, each object representing a driver
       seasonStandings.push(raceStandings);
       console.log("Added Standings");
       setStatus("Adding Standings for Round " + race);
     }
   }
 
+  //Prediction Algorithm - does the prediction and formats data ready for chart
   function getLeader() {
+    //Holds the total points for each driver over the season
     let driverSeasonPoints = [];
-    let driverPointsGained = [];
+
+    //Holds a list of the drivers names
     let drivers = [];
 
     seasonStandings.slice(-1)[0].forEach((driver) => {
       drivers.push(driver.lName);
     });
 
+    //Loop through drivers and get the total points at each race
     drivers.forEach((driver) => {
       let driverPoints = [];
       let newRaceData = [];
@@ -116,65 +129,44 @@ function SeasonPrediction() {
         });
       });
       driverPoints.push(newRaceData);
+      //Construct object with driver name and points array
       let driverRaceData = {
         name: driver,
         points: driverPoints,
       };
+      //Push to driver season points
       driverSeasonPoints.push(driverRaceData);
     });
 
-    driverSeasonPoints.forEach((driver) => {
-      let recentPoints = driver.points[0].slice(-6);
-      let recentPointsGained = [];
-      let total = 0;
-      let count = 0;
-      for (let i = 1; i < recentPoints.length; i++) {
-        let pointsGained = recentPoints[i] - recentPoints[i - 1];
-        recentPointsGained.push(pointsGained);
-      }
-      recentPointsGained.forEach((entry) => {
-        total += entry;
-        count++;
-      });
-      let averagePointsGained = total / count;
-      let currentPoints = Number(driver.points[0].slice(-1)[0]);
-      let driverAveragePointsGained = {
-        name: driver.name,
-        averagePointsGained: averagePointsGained,
-        currentPoints: currentPoints,
-        finishingPoints: currentPoints + averagePointsGained * 7,
-      };
-      driverPointsGained.push(driverAveragePointsGained);
-    });
-
-    console.log(driverPointsGained);
-
-    let driverPointsSorted = driverPointsGained.sort((a, b) => {
-      return b.finishingPoints - a.finishingPoints;
-    });
-    setSeasonPrediction((seasonPrediction = driverPointsSorted));
-
-    console.log(seasonPrediction);
+    //Holds each drivers latest average points gained
     let driverAveragePointsByRace = [];
 
+    //Calculate average points gained in last 5 races, or all races to that point
+    //Predicts finishing points for the season
     driverSeasonPoints.forEach((driver) => {
       let pointsGainedArray = [];
       let pointsAverage = [];
       let finishingPointsPrediction = [];
       for (let i = 1; i < driver.points[0].length; i++) {
+        //Build points gained array
         let count = 0;
         let total = 0;
         let pointsGained = driver.points[0][i] - driver.points[0][i - 1];
         pointsGainedArray.push(pointsGained);
+        //If in first 5 races, average of whole array
         if (i < 6) {
           pointsGainedArray.forEach((entry) => {
             total += entry;
             count++;
           });
           pointsAverage.push(total / count);
+          //Get total races remaining
           let racesRemaining = 22 - i;
+          //Holds predicton value
           let prediction =
             Number(driver.points[0][i]) + (total / count) * racesRemaining;
+
+          //Only adds prediction value when it is >0, otherwise just pushes current points
           if (prediction > 0) {
             finishingPointsPrediction.push(Math.round(prediction));
           } else {
@@ -183,6 +175,7 @@ function SeasonPrediction() {
             );
           }
         } else {
+          //Same as above, but calculates average of last 5 races only
           pointsGainedArray.slice(-5).forEach((entry) => {
             total += entry;
             count++;
@@ -198,6 +191,7 @@ function SeasonPrediction() {
           }
         }
       }
+      //Sets driver colors
       let color = "";
       if (driver.name === "Leclerc" || driver.name === "Sainz") {
         color = "#DC0000";
@@ -223,9 +217,9 @@ function SeasonPrediction() {
         color = "#999999";
       }
 
+      //Constructs chart data object
       let newData = {
         name: driver.name,
-        //pointsGainedAverage: pointsAverage,
         data: finishingPointsPrediction,
         color: color,
       };
@@ -233,10 +227,10 @@ function SeasonPrediction() {
     });
 
     console.log(driverAveragePointsByRace);
-    setFinishingPredictionByRace(driverAveragePointsByRace);
     setHasSeasonPrediction(true);
     setHideButton(true);
 
+    //Construct chart data object
     let data = [];
 
     driverAveragePointsByRace.forEach((driver) => {
