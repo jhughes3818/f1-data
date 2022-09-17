@@ -7,7 +7,6 @@ function SeasonPrediction() {
   //Declaring All States Used
   let [isLoading, setLoading] = useState(false); //Adds loading text & prevents premature loading of charts
   let [hasSeasonPrediction, setHasSeasonPrediction] = useState(false); //True when season prediction is reached
-  let [hideButton, setHideButton] = useState(false); //Hides start button
   let [status, setStatus] = useState(""); //Holds current loading text
   let [chartDataChartsJS, setChartDataChartsJS] = useState(); //Holds data for chart
 
@@ -24,7 +23,7 @@ function SeasonPrediction() {
         maxHeight: 50,
       },
       title: {
-        display: true,
+        display: false,
         text: "2022 Season Prediction",
       },
     },
@@ -228,7 +227,6 @@ function SeasonPrediction() {
 
     console.log(driverAveragePointsByRace);
     setHasSeasonPrediction(true);
-    setHideButton(true);
 
     //Construct chart data object
     let data = [];
@@ -250,6 +248,10 @@ function SeasonPrediction() {
     });
   }
 
+  if (hasSeasonPrediction === false) {
+    getRaces();
+  }
+
   return (
     <div className="w-full">
       <SideBar />
@@ -258,17 +260,12 @@ function SeasonPrediction() {
           <div className="content-center">
             <h1 className="block font-bold text-3xl">{status}</h1>
           </div>
-        ) : (
-          <div>
-            {hideButton ? null : (
-              <button className="select-button" onClick={getRaces}>
-                Predict 2022 Season
-              </button>
-            )}
-          </div>
-        )}
+        ) : null}
         {hasSeasonPrediction ? (
           <div className="px-10 py-10">
+            <h1 className="text-3xl font-Inter text-center px-5">
+              2022 Season Prediction
+            </h1>
             <Line data={chartDataChartsJS} options={chartOptions} />
           </div>
         ) : null}

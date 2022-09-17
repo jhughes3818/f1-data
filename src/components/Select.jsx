@@ -10,7 +10,7 @@ function Select(props) {
       className="w-full border-gray-300 rounded-lg shadow-sm text-black"
       name="year"
     >
-      {props.array.reverse().map(makeOption)}
+      {props.array.map(makeOption)}
     </select>
   );
 }
