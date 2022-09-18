@@ -248,14 +248,14 @@ function SeasonPrediction() {
     });
   }
 
-  if (hasSeasonPrediction === false) {
+  if (hasSeasonPrediction === false && isLoading === false) {
     getRaces();
   }
 
   return (
     <div className="w-full">
       <SideBar />
-      <div className="my-10 mx-auto border rounded-lg shadow-lg w-4/5">
+      <div className="box w-1/2">
         {isLoading ? (
           <div className="content-center">
             <h1 className="block font-bold text-3xl">{status}</h1>

@@ -1,7 +1,7 @@
 function YearsOptions(props) {
   return (
     <select
-      className="w-full border-gray-300 rounded-lg shadow-sm text-black"
+      className="w-full border-2 border-black  text-black mt-4"
       name="year"
       onChange={props.function}
     >

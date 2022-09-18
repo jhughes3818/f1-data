@@ -7,7 +7,7 @@ function Select(props) {
 
   return (
     <select
-      className="w-full border-gray-300 rounded-lg shadow-sm text-black"
+      className="w-full border-black shadow-sm text-black font-roboto"
       name="year"
     >
       {props.array.map(makeOption)}

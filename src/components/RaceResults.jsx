@@ -33,10 +33,6 @@ function RaceResults() {
     });
   }
 
-  function makeOption(item) {
-    return <option value={item}>{item}</option>;
-  }
-
   function makeOptionTracks(item) {
     return <option value={item}>{item}</option>;
   }
@@ -106,11 +102,13 @@ function RaceResults() {
       <div className="flex">
         <Sidebar />
 
-        <div className="rounded-lg bg-white mx-auto my-10 text-gray-800 px-8 py-8 shadow-lg border border-gray-300 space-y-6">
-          <h1 className="font-bold text-3xl">Race Results</h1>
-          <form name="select" className="mb-0 space-y-6">
+        <div className="box">
+          <h1 className="font-bold text-3xl text-black font-roboto">
+            Race Results
+          </h1>
+          <form name="select" className="mb-0 space-y-3">
             <div>
-              <label className="block font-medium text-lg">
+              <label className="block font-bold text-lg text-black font-roboto my-3">
                 Select Grand Prix
               </label>
               <YearsOptions function={loadTracks} />
@@ -119,12 +117,12 @@ function RaceResults() {
           <form className="gap-4" onSubmit={getRaceResults}>
             {trackSelected ? (
               <select
-                className="w-full border-gray-300 rounded-lg shadow-sm text-black"
+                className="w-full text-black font-roboto my-2 border-2 border-black"
                 name="year"
                 onChange={getGPRound}
               >
                 <option>Select Grand Prix</option>
-                {tracks.reverse().map(makeOptionTracks)}
+                {tracks.map(makeOptionTracks)}
               </select>
             ) : null}
           </form>
@@ -132,7 +130,7 @@ function RaceResults() {
             <button
               onClick={getRaceResults}
               type="submit"
-              className="select-button"
+              className="select-button my-3"
             >
               Submit
             </button>

@@ -66,7 +66,7 @@ function DriverStandings() {
       <div className="flex">
         <SideBar />
 
-        <div className="my-10 mx-auto border rounded-lg shadow-lg">
+        <div className="box">
           <form className="px-6 gap-2 py-6" onSubmit={getLatestStandings}>
             <YearsOptions function={getLatestStandings} />
           </form>

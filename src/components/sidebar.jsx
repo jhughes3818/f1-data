@@ -4,7 +4,7 @@ import { FaTrophy, FaStream, FaPoo, FaHome } from "react-icons/fa";
 
 const SideBar = (props) => {
   return (
-    <div className="fixed top-0 left-0 h-screen w-16 flex flex-col text-white shadow-lg bg-white">
+    <div className="fixed top-0 left-0 h-screen w-16 flex flex-col bg-white">
       <a href="/">
         <SideBarIcon
           icon={<FaHome size="28" color={props.homeColor} />}
