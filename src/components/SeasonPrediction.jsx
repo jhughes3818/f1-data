@@ -18,9 +18,19 @@ function SeasonPrediction() {
       mode: "index",
     },
     plugins: {
+      scales: {
+        font: {
+          family: "roboto",
+        },
+      },
       legend: {
         position: "top",
         maxHeight: 50,
+        labels: {
+          font: {
+            family: "roboto",
+          },
+        },
       },
       title: {
         display: false,
@@ -146,22 +156,39 @@ function SeasonPrediction() {
       let pointsGainedArray = [];
       let pointsAverage = [];
       let finishingPointsPrediction = [];
-      for (let i = 1; i < driver.points[0].length; i++) {
+      for (let i = 0; i < driver.points[0].length; i++) {
         //Build points gained array
-        let count = 0;
-        let total = 0;
+
         let pointsGained = driver.points[0][i] - driver.points[0][i - 1];
-        pointsGainedArray.push(pointsGained);
+        if (pointsGained >= 0) {
+          pointsGainedArray.push(pointsGained);
+        } else {
+          pointsGainedArray.push(0);
+        }
+
         //If in first 5 races, average of whole array
-        if (i < 6) {
+        if (i === 0) {
+          let racesRemaining = seasonRaces.length - i;
+          //Holds predicton value
+          let prediction = Number(driver.points[0][i]) * racesRemaining;
+          if (prediction > 0) {
+            finishingPointsPrediction.push(Math.round(prediction));
+          } else {
+            finishingPointsPrediction.push(
+              Math.round(Number(driver.points[0][i]))
+            );
+          }
+        } else if (i < 6) {
+          let count = 0;
+          let total = 0;
           pointsGainedArray.forEach((entry) => {
             total += entry;
             count++;
           });
           pointsAverage.push(total / count);
           //Get total races remaining
-          let racesRemaining = 22 - i;
-          //Holds predicton value
+          let racesRemaining = seasonRaces.length - i;
+          //Holds prediction value
           let prediction =
             Number(driver.points[0][i]) + (total / count) * racesRemaining;
 
@@ -174,13 +201,15 @@ function SeasonPrediction() {
             );
           }
         } else {
+          let count = 0;
+          let total = 0;
           //Same as above, but calculates average of last 5 races only
           pointsGainedArray.slice(-5).forEach((entry) => {
             total += entry;
             count++;
           });
           pointsAverage.push(total / count);
-          let racesRemaining = 22 - i;
+          let racesRemaining = seasonRaces.length - i;
           let prediction =
             Number(driver.points[0][i]) + (total / count) * racesRemaining;
           if (prediction > 0) {
@@ -231,7 +260,7 @@ function SeasonPrediction() {
     //Construct chart data object
     let data = [];
 
-    driverAveragePointsByRace.forEach((driver) => {
+    driverAveragePointsByRace.slice(0, 6).forEach((driver) => {
       let newData = {
         label: driver.name,
         data: driver.data,
@@ -243,7 +272,7 @@ function SeasonPrediction() {
     });
 
     setChartDataChartsJS({
-      labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      labels: seasonRaces,
       datasets: data,
     });
   }
@@ -255,7 +284,7 @@ function SeasonPrediction() {
   return (
     <div className="w-full">
       <SideBar />
-      <div className="box w-1/2">
+      <div className="box w-1/2 pt-0">
         {isLoading ? (
           <div className="content-center">
             <h1 className="block font-bold text-3xl">{status}</h1>
@@ -263,7 +292,7 @@ function SeasonPrediction() {
         ) : null}
         {hasSeasonPrediction ? (
           <div className="px-10 py-10">
-            <h1 className="text-3xl font-Inter text-center px-5">
+            <h1 className="text-3xl font-roboto text-center pb-3 px-5">
               2022 Season Prediction
             </h1>
             <Line data={chartDataChartsJS} options={chartOptions} />

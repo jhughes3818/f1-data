@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Sidebar from "./sidebar";
 import axios from "axios";
-import yearsSupported from "../data/years";
 import YearsOptions from "./YearsOptions";
 
 function RaceResults() {
@@ -99,9 +98,8 @@ function RaceResults() {
 
   return (
     <div>
+      <Sidebar />
       <div className="flex">
-        <Sidebar />
-
         <div className="box">
           <h1 className="font-bold text-4xl text-black font-roboto">
             Race Results

@@ -67,23 +67,27 @@ function DriverStandings() {
         <SideBar />
 
         <div className="box">
-          <form className="px-6 gap-2 py-6" onSubmit={getLatestStandings}>
+          <h1 className="text-3xl font-roboto font-bold mx-auto">
+            Driver Standings
+          </h1>
+          <form className="gap-2" onSubmit={getLatestStandings}>
             <YearsOptions function={getLatestStandings} />
           </form>
-          <table className="table">
-            <thead>
-              <tr className="uppercase font-medium h-12">
-                <td className="px-2">Position</td>
-                <td className="pr-6 pl-2">Driver</td>
-                <td className="px-2">Points</td>
-              </tr>
-            </thead>
-            {haveStandings ? (
+          {haveStandings ? (
+            <table className="table">
+              <thead>
+                <tr className="uppercase font-medium h-12">
+                  <td className="px-2">Position</td>
+                  <td className="pr-6 pl-2">Driver</td>
+                  <td className="px-2">Points</td>
+                </tr>
+              </thead>
+
               <tbody className="whitespace-nowrap">
                 {Standings.map(CreateStandingsRows)}
               </tbody>
-            ) : null}
-          </table>
+            </table>
+          ) : null}
         </div>
       </div>
     </div>
