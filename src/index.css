@@ -51,6 +51,6 @@ code {
   }
 
   .box {
-    @apply bg-[#00ff00] mx-auto my-10 text-gray-800 px-8 py-8 shadow-[15px_15px_0px_0px_black];
+    @apply bg-[#00ff00] pt-5 mx-auto my-10 text-gray-800 px-3 py-3 shadow-[15px_15px_0px_0px_black];
   }
 }

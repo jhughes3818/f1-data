@@ -103,21 +103,21 @@ function RaceResults() {
         <Sidebar />
 
         <div className="box">
-          <h1 className="font-bold text-3xl text-black font-roboto">
+          <h1 className="font-bold text-4xl text-black font-roboto">
             Race Results
           </h1>
-          <form name="select" className="mb-0 space-y-3">
+          <form name="select" className="mb-0 space-y-1">
             <div>
-              <label className="block font-bold text-lg text-black font-roboto my-3">
+              <label className="block font-bold text-lg text-black font-roboto mt-3">
                 Select Grand Prix
               </label>
               <YearsOptions function={loadTracks} />
             </div>
           </form>
-          <form className="gap-4" onSubmit={getRaceResults}>
+          <form onSubmit={getRaceResults}>
             {trackSelected ? (
               <select
-                className="w-full text-black font-roboto my-2 border-2 border-black"
+                className="w-full text-black font-roboto border-2 border-black mt-3"
                 name="year"
                 onChange={getGPRound}
               >
